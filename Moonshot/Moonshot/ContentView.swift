@@ -47,45 +47,41 @@ struct User: Codable {
     let address: Address
 }
 
+let layoutColumns = [
+    GridItem(.fixed(80)),
+    GridItem(.fixed(80)),
+    GridItem(.fixed(80))
+]
+
+struct SquareView: View {
+    let contentText: String
+    var body: some View {
+        ZStack {
+            Color.blue
+            Text("\(contentText)")
+                .foregroundStyle(.white)
+        }
+        .frame(height: 50)
+        .cornerRadius(10)
+    }
+}
+
+let layoutAdaptiveColumns = [
+        GridItem(.adaptive(minimum: 90, maximum: 90))
+    ]
+
 struct ContentView: View {
     var body: some View {
         NavigationStack {
-            Button("Decode JSON") {
-                print("Pushed the button")
-                
-                let input = """
-                {
-                    "name": "Michael Danko".
-                    "address": {
-                        "street": "123 Main Street",
-                        "city": "Charlotte",
-                        "state": "NC"
+            ScrollView(.vertical){
+                LazyVGrid(columns: layoutAdaptiveColumns) {
+                    ForEach(0..<100) {
+                        SquareView(contentText: "Item \($0)")
                     }
                 }
-                """
-                print("\(input)")
-                let data = Data(input.utf8)
-                let decoder = JSONDecoder()
-                
-                
-                do {
-                    let user = try decoder.decode(User.self, from: data)
-                    print("User is \(user.name)")
-                    print("Lives at \(user.address.street)")
-                } catch  {
-                    print("Error trying to decode the user.")
-                    print("\(error.localizedDescription)")
-                }
-                
-//                if let user = try? decoder.decode(User.self, from: data) {
-//                    print("trying to decode")
-//                    print(user.address.street)
-//                }
-            
-                
             }
-            .navigationTitle("SwiftUI")
-        }
+            .navigationTitle("Moonshot")
+        } // End of NavigationStack
     }
 }
 
