@@ -20,6 +20,8 @@ struct MissionView: View {
                         return width * 0.6
                     }
                     .padding(.top)
+                
+                // VStack to display mission highlights and mission description
                 VStack(alignment: .leading) {
                     Text("Mission Highlights")
                         .font(.title.bold())
@@ -27,6 +29,31 @@ struct MissionView: View {
                     Text(mission.description)
                 }
                 .padding(.horizontal)
+                
+                // VStack to display crew images
+                VStack(alignment: .leading){
+                    Text("Crew")
+                        .font(.title.bold())
+                        .padding(.bottom, 5)
+                }
+                
+//                Button("Print CrewRole") {
+//                    print(mission.crew)
+//                }
+                
+                VStack {
+                    ForEach(mission.crew, id: \.name) { crewMember in
+                        VStack {
+                            Image(crewMember.name)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(.circle)
+                                .padding(.top)
+                            Text(crewMember.name.capitalized)
+                                .font(.headline)
+                        }
+                    }
+                }
             }
             .padding(.bottom)
         }
