@@ -43,10 +43,12 @@ struct MissionView: View {
                 
                 // VStack to display mission highlights and mission description
                 VStack(alignment: .leading) {
+                    UIDivider()
                     Text("Mission Highlights")
                         .font(.title.bold())
                         .padding(.bottom, 5)
                     Text(mission.description)
+                    UIDivider()
                     Text("Crew")
                         .font(.title.bold())
                         .padding(.top, 5)
