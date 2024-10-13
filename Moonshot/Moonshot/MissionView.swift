@@ -8,7 +8,27 @@
 import SwiftUI
 
 struct MissionView: View {
+   
     let mission: Mission
+    
+    struct CrewMember {
+        let role: String
+        let astronaut: Astronaut
+    }
+    let crew: [CrewMember]
+    
+    init(mission: Mission, astronauts: [String:Astronaut]) {
+        self.mission = mission
+        
+        self.crew = mission.crew.map { member in
+            if let astronaut = astronauts[member.name] {
+                return CrewMember(role: member.role, astronaut: astronaut)
+            } else {
+                fatalError("Missing \(member.name)")
+            }
+        }
+    }
+    
     
     var body: some View {
         ScrollView {
@@ -27,33 +47,77 @@ struct MissionView: View {
                         .font(.title.bold())
                         .padding(.bottom, 5)
                     Text(mission.description)
-                }
-                .padding(.horizontal)
-                
-                // VStack to display crew images
-                VStack(alignment: .leading){
                     Text("Crew")
                         .font(.title.bold())
-                        .padding(.bottom, 5)
+                        .padding(.top, 5)
+                        .padding(.bottom, 10)
+                }
+                .padding(.horizontal, 20)
+                
+                
+                
+                // VStack to display crew images
+                VStack(alignment: .leading) {
+//                    Text("Crew")
+//                        .font(.title.bold())
+//                        .padding(.bottom, 5)
+//                        .padding(.horizontal)
                 }
                 
 //                Button("Print CrewRole") {
 //                    print(mission.crew)
 //                }
                 
-                VStack {
-                    ForEach(mission.crew, id: \.name) { crewMember in
-                        VStack {
-                            Image(crewMember.name)
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(.circle)
-                                .padding(.top)
-                            Text(crewMember.name.capitalized)
-                                .font(.headline)
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(crew, id: \.role) { crewMember in
+                            NavigationLink {
+                                Text("CrewMember Details")
+                            } label: {
+                                HStack {
+                                    Image(crewMember.astronaut.id)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 140)
+                                        .clipShape(.circle)
+                                        .overlay(Circle().strokeBorder(.white, lineWidth: 3))
+                                    VStack {
+                                        Text(crewMember.astronaut.name)
+                                            .font(.headline).fontWeight(.bold)
+                                            .foregroundStyle(Color.white)
+                                        Text(crewMember.role)
+                                            .font(.subheadline)
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.white.opacity(0.5))
+                                        
+                                    }
+                                } // End of HStack
+                                .padding(.trailing)
+                            }
                         }
                     }
-                }
+                } // End of horizontal ScrollView
+                .scrollIndicators(.never)
+                
+//                ScrollView(.horizontal) {
+//                    HStack {
+//                        ForEach(mission.crew, id: \.name) { crewMember in
+//                            VStack {
+//                                Image(crewMember.name)
+//                                    .resizable()
+//                                    .scaledToFit()
+//                                    .clipShape(.circle)
+//                                    .padding(.top)
+//                                Text(crewMember.name.capitalized)
+//                                    .font(.headline).fontWeight(.bold)
+//                                Text(crewMember.role.capitalized)
+//                                    .font(.subheadline)
+//                                    .fontWeight(.bold)
+//                                    .foregroundStyle(.white.opacity(0.5))
+//                            }
+//                        } // End of ForEach
+//                    } // End of HStack
+//                } // End of ScrollView
             }
             .padding(.bottom)
         }
@@ -65,8 +129,8 @@ struct MissionView: View {
 
 #Preview {
     let missions: [Mission] = Bundle.main.decode(file: "missions.json")
-
-    MissionView(mission: missions[0])
+    let astronauts: [String: Astronaut] = Bundle.main.decode(file: "astronauts.json")
+    MissionView(mission: missions[0], astronauts: astronauts)
         .preferredColorScheme(.dark)
 }
 
